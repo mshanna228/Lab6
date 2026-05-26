@@ -1,0 +1,16 @@
+info
+show
+add
+TestWorker
+150
+250
+60000
+LABORER
+HIRED
+GOVERNMENT
+5
+info
+show
+average_of_salary
+head
+exit

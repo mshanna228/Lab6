@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+
+    repositories {
+        mavenCentral()
+    }
+
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
+}
+
+project(':server') {
+    apply plugin: 'application'
+    application {
+        mainClass = 'server.ServerApp'
+    }
+    dependencies {
+        implementation project(':common')
+        implementation 'ch.qos.logback:logback-classic:1.4.14'
+    }
+    run {
+        standardInput = System.in
+    }
+    jar {
+        manifest {
+            attributes 'Main-Class': 'server.ServerApp'
+        }
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}
+
+project(':client') {
+    apply plugin: 'application'
+    application {
+        mainClass = 'client.ClientApp'
+    }
+    dependencies {
+        implementation project(':common')
+    }
+    run {
+        standardInput = System.in
+    }
+    jar {
+        manifest {
+            attributes 'Main-Class': 'client.ClientApp'
+        }
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}

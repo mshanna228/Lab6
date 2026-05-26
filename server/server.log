@@ -1,0 +1,36 @@
+2026-05-26 16:00:47.791 [main] INFO  server.ServerApp - Инициализация сервера. Файл коллекции: collection.json
+2026-05-26 16:00:47.796 [main] WARN  server.FileManager - Файл 'collection.json' не найден. Создается пустая коллекция.
+2026-05-26 16:00:47.800 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-05-26 16:00:47.801 [Thread-1] INFO  server.ServerApp - Поток консоли сервера запущен. Доступны команды: 'save', 'exit'.
+2026-05-26 16:00:47.812 [main] INFO  server.UDPServer - UDP-сервер успешно запущен на порту: 1821
+2026-05-26 16:01:05.254 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.265 [main] INFO  server.UDPServer - Десериализован запрос: info (аргумент: '')
+2026-05-26 16:01:05.275 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 411 байт)
+2026-05-26 16:01:05.287 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.288 [main] INFO  server.UDPServer - Десериализован запрос: show (аргумент: '')
+2026-05-26 16:01:05.288 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 250 байт)
+2026-05-26 16:01:05.317 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.322 [main] INFO  server.UDPServer - Десериализован запрос: add (аргумент: '')
+2026-05-26 16:01:05.327 [main] INFO  server.WorkerManager - Добавлен новый рабочий: ID=1, Name=TestWorker
+2026-05-26 16:01:05.329 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 298 байт)
+2026-05-26 16:01:05.340 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.341 [main] INFO  server.UDPServer - Десериализован запрос: info (аргумент: '')
+2026-05-26 16:01:05.342 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 411 байт)
+2026-05-26 16:01:05.355 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.356 [main] INFO  server.UDPServer - Десериализован запрос: show (аргумент: '')
+2026-05-26 16:01:05.374 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 443 байт)
+2026-05-26 16:01:05.386 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.387 [main] INFO  server.UDPServer - Десериализован запрос: average_of_salary (аргумент: '')
+2026-05-26 16:01:05.396 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 297 байт)
+2026-05-26 16:01:05.402 [main] INFO  server.UDPServer - Получен новый пакет от клиента: IP=/127.0.0.1, Port=64077
+2026-05-26 16:01:05.402 [main] INFO  server.UDPServer - Десериализован запрос: head (аргумент: '')
+2026-05-26 16:01:05.402 [main] INFO  server.UDPServer - Отправлен ответ клиенту: IP=/127.0.0.1, Port=64077 (размер: 491 байт)
+2026-05-26 16:01:30.866 [Thread-1] INFO  server.ServerApp - Получена команда сохранения коллекции от администратора сервера.
+2026-05-26 16:01:30.867 [Thread-1] INFO  server.FileManager - Коллекция успешно сохранена в файл: collection.json
+2026-05-26 16:01:35.910 [Thread-1] INFO  server.ServerApp - Получена команда завершения работы от администратора сервера.
+2026-05-26 16:01:35.910 [Thread-1] INFO  server.FileManager - Коллекция успешно сохранена в файл: collection.json
+2026-05-26 16:01:35.911 [Thread-1] INFO  server.UDPServer - UDP-сервер остановлен.
+2026-05-26 16:01:35.911 [main] INFO  server.UDPServer - Сокет сервера успешно закрыт.
+2026-05-26 16:01:35.912 [Thread-0] INFO  server.ServerApp - Получен сигнал завершения работы JVM. Сохранение коллекции перед выходом...
+2026-05-26 16:01:35.912 [Thread-0] INFO  server.FileManager - Коллекция успешно сохранена в файл: collection.json
+2026-05-26 16:01:35.913 [Thread-0] INFO  server.ServerApp - Автоматическое сохранение успешно выполнено.

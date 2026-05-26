@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Ivan",
+    "coordinates": {
+      "x": 100,
+      "y": 200.0
+    },
+    "creationDate": "1775668707773",
+    "salary": 50000,
+    "position": "LABORER",
+    "status": "HIRED",
+    "organization": {
+      "employeesCount": 10,
+      "type": "COMMERCIAL"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Alex",
+    "coordinates": {
+      "x": 50,
+      "y": 300.0
+    },
+    "creationDate": "1775668834530",
+    "salary": 120000,
+    "position": "LEAD_DEVELOPER",
+    "status": "RECOMMENDED_FOR_PROMOTION",
+    "organization": {
+      "employeesCount": null,
+      "type": "TRUST"
+    }
+  }
+]
