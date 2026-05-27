@@ -54,7 +54,7 @@ public class FileManager {
                 json.append("\n");
             }
             json.append("]");
-            fos.write(json.toString().getBytes());
+            fos.write(json.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
             logger.info("Коллекция успешно сохранена в файл: " + fileName);
         } catch (IOException e) {
             logger.error("Ошибка при сохранении коллекции в файл: " + e.getMessage(), e);
@@ -74,11 +74,11 @@ public class FileManager {
             return collection;
         }
 
-        try (FileReader reader = new FileReader(file)) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
-            int c;
-            while ((c = reader.read()) != -1) {
-                sb.append((char) c);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
             }
             String content = sb.toString().trim();
             if (content.isEmpty() || content.equals("[]")) {

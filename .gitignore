@@ -1,0 +1,21 @@
+# Gradle files
+.gradle/
+build/
+
+# IntelliJ IDEA files
+.idea/
+out/
+*.iml
+*.iws
+*.ipr
+
+# Java class files
+*.class
+
+# Log files
+*.log
+server.log
+
+# OS files
+.DS_Store
+Thumbs.db

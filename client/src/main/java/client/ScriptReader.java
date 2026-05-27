@@ -23,7 +23,7 @@ public class ScriptReader {
         if (fileNames.contains(file.getAbsolutePath())) {
             throw new RuntimeException("Обнаружена бесконечная рекурсия скриптов!");
         }
-        scanners.push(new Scanner(file));
+        scanners.push(new Scanner(file, "UTF-8"));
         fileNames.push(file.getAbsolutePath());
         argumentsStack.push(arguments);
     }
