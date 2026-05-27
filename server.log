@@ -33,3 +33,15 @@
 2026-05-27 16:51:09.234 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
 2026-05-27 16:51:09.234 [Thread-1] INFO  server.ServerApp - Поток консоли сервера запущен. Доступны команды: 'save', 'exit'.
 2026-05-27 16:51:09.244 [main] INFO  server.UDPServer - UDP-сервер успешно запущен на порту: 1821
+2026-05-27 16:52:10.624 [Thread-1] INFO  server.ServerApp - Получена команда завершения работы от администратора сервера.
+2026-05-27 16:52:10.624 [Thread-1] INFO  server.FileManager - Коллекция успешно сохранена в файл: collection.json
+2026-05-27 16:52:10.624 [Thread-1] INFO  server.UDPServer - UDP-сервер остановлен.
+2026-05-27 16:52:10.624 [main] INFO  server.UDPServer - Сокет сервера успешно закрыт.
+2026-05-27 16:52:10.632 [Thread-0] INFO  server.ServerApp - Получен сигнал завершения работы JVM. Сохранение коллекции перед выходом...
+2026-05-27 16:52:10.632 [Thread-0] INFO  server.FileManager - Коллекция успешно сохранена в файл: collection.json
+2026-05-27 16:52:10.632 [Thread-0] INFO  server.ServerApp - Автоматическое сохранение успешно выполнено.
+2026-05-27 16:52:17.673 [main] INFO  server.ServerApp - Инициализация сервера. Файл коллекции: collection.json
+2026-05-27 16:52:17.686 [main] INFO  server.FileManager - Загружено элементов из файла: 2
+2026-05-27 16:52:17.689 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-05-27 16:52:17.690 [Thread-1] INFO  server.ServerApp - Поток консоли сервера запущен. Доступны команды: 'save', 'exit'.
+2026-05-27 16:52:17.699 [main] INFO  server.UDPServer - UDP-сервер успешно запущен на порту: 1821
