@@ -24,6 +24,8 @@ public class WorkerManager {
         this.lastInitTime = LocalDateTime.now();
         this.fileManager = fileManager;
         this.collection = fileManager.readCollection();
+
+        var a = LESHA_1.INSTANCE;
     }
 
     public synchronized String info() {

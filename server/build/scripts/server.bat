@@ -68,7 +68,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\server.jar;%APP_HOME%\lib\common.jar;%APP_HOME%\lib\logback-classic-1.4.14.jar;%APP_HOME%\lib\logback-core-1.4.14.jar;%APP_HOME%\lib\slf4j-api-2.0.7.jar
+set CLASSPATH=%APP_HOME%\lib\server.jar;%APP_HOME%\lib\common.jar;%APP_HOME%\lib\logback-classic-1.4.14.jar;%APP_HOME%\lib\postgresql-42.7.11.jar;%APP_HOME%\lib\logback-core-1.4.14.jar;%APP_HOME%\lib\slf4j-api-2.0.7.jar
 
 
 @rem Execute server
