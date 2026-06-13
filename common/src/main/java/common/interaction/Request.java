@@ -13,11 +13,20 @@ public class Request implements Serializable {
     private String commandName;
     private String commandStringArgument;
     private Serializable commandObjectArgument;
+    private String login;    // логин пользователя
+    private String password; // пароль в открытом виде
 
     public Request(String commandName, String commandStringArgument, Serializable commandObjectArgument) {
         this.commandName = commandName;
         this.commandStringArgument = commandStringArgument;
         this.commandObjectArgument = commandObjectArgument;
+    }
+
+    public Request(String commandName, String commandStringArgument, Serializable commandObjectArgument,
+                   String login, String password) {
+        this(commandName, commandStringArgument, commandObjectArgument);
+        this.login = login;
+        this.password = password;
     }
 
     public Request(String commandName, String commandStringArgument) {
@@ -38,6 +47,22 @@ public class Request implements Serializable {
 
     public Serializable getCommandObjectArgument() {
         return commandObjectArgument;
+    }
+
+    public String getLogin() {
+        return login != null ? login : "";
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password != null ? password : "";
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isEmpty() {

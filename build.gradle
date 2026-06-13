@@ -28,6 +28,7 @@ project(':server') {
     }
     run {
         standardInput = System.in
+        // ЛР7: файл коллекции больше не нужен — хранение в PostgreSQL
     }
     jar {
         manifest {

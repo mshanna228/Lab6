@@ -18,6 +18,7 @@ public class Worker implements Serializable, Comparable<Worker> {
     private Position position;          // не null
     private Status status;              // может быть null
     private Organization organization;  // не null
+    private String owner;               // логин пользователя, создавшего объект (заполняется сервером)
 
     /**
      * Конструктор для создания нового Worker (без id и creationDate — они генерируются на сервере).
@@ -119,6 +120,14 @@ public class Worker implements Serializable, Comparable<Worker> {
         return organization;
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
     /**
      * Сравнение по местоположению (Coordinates) — требование задания.
      */
@@ -138,6 +147,7 @@ public class Worker implements Serializable, Comparable<Worker> {
                 ", position=" + position +
                 ", status=" + status +
                 ", organization=" + organization +
+                ", owner='" + owner + '\''+
                 '}';
     }
 }
