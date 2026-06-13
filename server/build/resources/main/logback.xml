@@ -4,7 +4,8 @@
     <!-- Вывод в консоль -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <charset>${sun.stdout.encoding:-${stdout.encoding:-UTF-8}}</charset>
+<!--            <charset>${sun.stdout.encoding:-${stdout.encoding:-UTF-8}}</charset>-->
+            <charset>UTF-8</charset>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>

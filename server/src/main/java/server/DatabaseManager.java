@@ -63,8 +63,19 @@ public class DatabaseManager {
 
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(url, user, password);
-            logger.info("Подключение к PostgreSQL успешно установлено.");
+            try {
+                connection = DriverManager.getConnection(url, user, password);
+                logger.info("Подключение к PostgreSQL успешно установлено.");
+            } catch (SQLException e) {
+                if (!"localhost".equalsIgnoreCase(host)) {
+                    logger.warn("Не удалось подключиться к хосту " + host + " (" + e.getMessage() + "). Пробуем подключиться к localhost...");
+                    String fallbackUrl = "jdbc:postgresql://localhost:" + port + "/" + dbName;
+                    connection = DriverManager.getConnection(fallbackUrl, user, password);
+                    logger.info("Успешное подключение к запасному хосту (localhost).");
+                } else {
+                    throw e;
+                }
+            }
         } catch (ClassNotFoundException e) {
             logger.error("Драйвер PostgreSQL не найден! Добавьте зависимость в build.gradle.", e);
             throw new RuntimeException("PostgreSQL драйвер не найден", e);

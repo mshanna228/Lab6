@@ -28,6 +28,7 @@ project(':server') {
     }
     run {
         standardInput = System.in
+        systemProperty "file.encoding", "UTF-8"
         // ЛР7: файл коллекции больше не нужен — хранение в PostgreSQL
     }
     jar {
@@ -51,6 +52,7 @@ project(':client') {
     }
     run {
         standardInput = System.in
+        systemProperty "file.encoding", "UTF-8"
     }
     jar {
         manifest {
