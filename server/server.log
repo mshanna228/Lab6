@@ -57,3 +57,26 @@
 2026-06-10 17:43:59.118 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
 2026-06-10 17:43:59.118 [Thread-1] INFO  server.ServerApp - Поток консоли сервера запущен. Доступны команды: 'save', 'exit'.
 2026-06-10 17:43:59.125 [main] INFO  server.UDPServer - UDP-сервер успешно запущен на порту: 1821
+2026-06-13 13:49:20.311 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 13:49:23.096 [main] ERROR server.DatabaseManager - Ошибка подключения к PostgreSQL: Ошибка при попытке подсоединения.
+org.postgresql.util.PSQLException: Ошибка при попытке подсоединения.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:437)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:52)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+	at org.postgresql.Driver.makeConnection(Driver.java:448)
+	at org.postgresql.Driver.connect(Driver.java:298)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:681)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:229)
+	at server.DatabaseManager.<init>(DatabaseManager.java:47)
+	at server.DatabaseManager.<clinit>(DatabaseManager.java:32)
+	at server.WorkerManager.<init>(WorkerManager.java:49)
+	at server.ServerApp.main(ServerApp.java:32)
+Caused by: java.net.UnknownHostException: pg
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:572)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:633)
+	at org.postgresql.core.PGStream.createSocket(PGStream.java:271)
+	at org.postgresql.core.PGStream.<init>(PGStream.java:132)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:219)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:365)
+	... 10 common frames omitted

@@ -38,27 +38,51 @@ public class DatabaseManager {
     // -------------------------------------------------------------------------
 
     private DatabaseManager() {
-        try {
-            // Загружаем драйвер PostgreSQL явно (требуется для некоторых окружений)
-            Class.forName("org.postgresql.Driver");
+        // ---------------------------------------------------------------
+        // Параметры подключения читаются из переменных среды.
+        // Если переменная не задана — используется значение по умолчанию.
+        //
+        // Для запуска ЛОКАЛЬНО (PostgreSQL на вашем компьютере):
+        //   Windows PowerShell:
+        //     $env:DB_HOST="localhost"; $env:DB_PORT="5432"; $env:DB_NAME="studs"
+        //     $env:DB_USER="s505045"; $env:DB_PASSWORD="ваш_пароль"
+        //     .\gradlew.bat :server:run
+        //
+        // На КАФЕДРАЛЬНОМ СЕРВЕРЕ (хост pg доступен по сети):
+        //   export DB_HOST=pg
+        //   java -jar server.jar
+        // ---------------------------------------------------------------
+        String host     = getEnvOrDefault("DB_HOST",     "pg");
+        String port     = getEnvOrDefault("DB_PORT",     "5432");
+        String dbName   = getEnvOrDefault("DB_NAME",     "studs");
+        String user     = getEnvOrDefault("DB_USER",     "s505045");
+        String password = getEnvOrDefault("DB_PASSWORD", "x0E4qloofOgALNWu");
 
-            // Параметры подключения к кафедральному серверу
-            // Хост: pg, БД: studs, логин/пароль — от SSH-аккаунта
-            connection = DriverManager.getConnection(
-                    "jdbc:postgresql://pg/studs",
-                    "s505045",
-                    "x0E4qloofOgALNWu"
-            );
+        String url = "jdbc:postgresql://" + host + ":" + port + "/" + dbName;
+        logger.info("Подключение к БД: " + url + " (пользователь: " + user + ")");
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection(url, user, password);
             logger.info("Подключение к PostgreSQL успешно установлено.");
         } catch (ClassNotFoundException e) {
             logger.error("Драйвер PostgreSQL не найден! Добавьте зависимость в build.gradle.", e);
             throw new RuntimeException("PostgreSQL драйвер не найден", e);
         } catch (SQLException e) {
-            logger.error("Ошибка подключения к PostgreSQL: " + e.getMessage(), e);
+            logger.error("Ошибка подключения к PostgreSQL (" + url + "): " + e.getMessage(), e);
+            logger.error("Подсказка: задайте переменные среды DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD");
             throw new RuntimeException("Ошибка подключения к БД", e);
         }
 
         createTablesIfNotExist();
+    }
+
+    /**
+     * Читает переменную среды. Если не задана — возвращает defaultValue.
+     */
+    private static String getEnvOrDefault(String name, String defaultValue) {
+        String val = System.getenv(name);
+        return (val != null && !val.isBlank()) ? val : defaultValue;
     }
 
     /**
