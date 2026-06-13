@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 /**
  * Класс для работы с файлом коллекции на сервере.
- * Использует самописный парсер JSON для совместимости с файлами ЛР5.
+ * Исп. парсер JSON для совместимости с файлами ЛР5.
  */
 public class FileManager {
     private static final Logger logger = LoggerFactory.getLogger(FileManager.class);

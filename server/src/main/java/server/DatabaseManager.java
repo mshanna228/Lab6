@@ -28,30 +28,12 @@ import java.util.PriorityQueue;
 public class DatabaseManager {
     private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
-    /** Единственный экземпляр синглтона */
-    public static final DatabaseManager INSTANCE = new DatabaseManager();
+    public static final DatabaseManager INSTANCE = new DatabaseManager(); // экземпляр синглтона
 
     private Connection connection;
 
-    // -------------------------------------------------------------------------
-    // Конструктор: подключение + создание таблиц
-    // -------------------------------------------------------------------------
-
     private DatabaseManager() {
-        // ---------------------------------------------------------------
-        // Параметры подключения читаются из переменных среды.
-        // Если переменная не задана — используется значение по умолчанию.
-        //
-        // Для запуска ЛОКАЛЬНО (PostgreSQL на вашем компьютере):
-        //   Windows PowerShell:
-        //     $env:DB_HOST="localhost"; $env:DB_PORT="5432"; $env:DB_NAME="studs"
-        //     $env:DB_USER="s505045"; $env:DB_PASSWORD="ваш_пароль"
-        //     .\gradlew.bat :server:run
-        //
-        // На КАФЕДРАЛЬНОМ СЕРВЕРЕ (хост pg доступен по сети):
-        //   export DB_HOST=pg
-        //   java -jar server.jar
-        // ---------------------------------------------------------------
+
         String host     = getEnvOrDefault("DB_HOST",     "pg");
         String port     = getEnvOrDefault("DB_PORT",     "5432");
         String dbName   = getEnvOrDefault("DB_NAME",     "studs");
@@ -89,7 +71,8 @@ public class DatabaseManager {
     }
 
     /**
-     * Читает переменную среды. Если не задана — возвращает defaultValue.
+     * Читает переменную среды.
+     * Если не задана —> возвращает defaultValue.
      */
     private static String getEnvOrDefault(String name, String defaultValue) {
         String val = System.getenv(name);
@@ -98,7 +81,7 @@ public class DatabaseManager {
 
     /**
      * Создаёт таблицы в БД, если они ещё не существуют.
-     * Порядок важен: сначала users, потом organizations, потом workers
+     * Порядок: 1) users, 2) organizations, 3) workers
      * (workers ссылается на обе предыдущие таблицы).
      */
     private void createTablesIfNotExist() {
@@ -146,13 +129,9 @@ public class DatabaseManager {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Загрузка коллекции из БД
-    // -------------------------------------------------------------------------
-
     /**
+     * Загрузка коллекции из БД.
      * Читает все Worker-ы из БД и возвращает в виде PriorityQueue.
-     * Вызывается один раз при старте сервера.
      *
      * @return коллекция всех Worker-ов из БД
      */
@@ -182,9 +161,7 @@ public class DatabaseManager {
         return collection;
     }
 
-    // -------------------------------------------------------------------------
     // CRUD операции для Worker
-    // -------------------------------------------------------------------------
 
     /**
      * Вставляет нового Worker-а в БД.
@@ -368,9 +345,6 @@ public class DatabaseManager {
         return false;
     }
 
-    // -------------------------------------------------------------------------
-    // Вспомогательные методы для Organization
-    // -------------------------------------------------------------------------
 
     private long insertOrganization(Organization org) {
         String sql = "INSERT INTO s505045_organizations (employees_count, org_type) VALUES (?, ?)";
@@ -423,9 +397,7 @@ public class DatabaseManager {
         }
     }
 
-    // -------------------------------------------------------------------------
     // Маппинг ResultSet → Worker
-    // -------------------------------------------------------------------------
 
     private Worker mapResultSetToWorker(ResultSet rs) throws SQLException {
         Worker worker = new Worker();
@@ -456,16 +428,14 @@ public class DatabaseManager {
         worker.setOrganization(org);
 
         // Сохраняем owner (имя пользователя) в Worker через отдельное поле
-        // (Worker не имеет поля owner — читаем и сохраняем через ThreadLocal или передаём отдельно)
+        // (Worker не имеет поля owner —> читаем и сохраняем через ThreadLocal или передаём отдельно)
         // Тут просто возвращаем Worker; owner учитывается в WorkerManager
         return worker;
     }
 
-    // -------------------------------------------------------------------------
-    // Авторизация и регистрация пользователей
-    // -------------------------------------------------------------------------
-
     /**
+     *
+     * Авторизация и регистрация пользователей.
      * Регистрирует нового пользователя в БД.
      * Пароль хэшируется алгоритмом SHA-1.
      *
@@ -524,10 +494,6 @@ public class DatabaseManager {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Хэширование SHA-1
-    // -------------------------------------------------------------------------
-
     /**
      * Хэширует строку алгоритмом SHA-1 и возвращает hex-строку (40 символов).
      *
@@ -548,10 +514,6 @@ public class DatabaseManager {
             throw new RuntimeException("SHA-1 недоступен", e);
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Закрытие соединения
-    // -------------------------------------------------------------------------
 
     /**
      * Закрывает соединение с БД. Вызывается при завершении работы сервера.

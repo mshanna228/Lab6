@@ -509,3 +509,75 @@ Caused by: java.net.ConnectException: Connection refused: no further information
 2026-06-13 17:14:07.070 [Thread-0] INFO  server.ServerApp - Завершение работы сервера. Закрытие соединения с БД...
 2026-06-13 17:14:07.146 [Thread-0] INFO  server.DatabaseManager - Соединение с PostgreSQL закрыто.
 2026-06-13 17:14:07.146 [Thread-0] INFO  server.ServerApp - Соединение с БД закрыто.
+2026-06-13 17:46:35.525 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 17:46:35.533 [main] INFO  server.DatabaseManager - Подключение к БД: jdbc:postgresql://pg:5432/studs (пользователь: s505045)
+2026-06-13 17:46:38.330 [main] WARN  server.DatabaseManager - Не удалось подключиться к хосту pg (Ошибка при попытке подсоединения.). Пробуем подключиться к localhost...
+2026-06-13 17:46:38.336 [main] ERROR server.DatabaseManager - Ошибка подключения к PostgreSQL (jdbc:postgresql://pg:5432/studs): Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+org.postgresql.util.PSQLException: Подсоединение по адресу localhost:5432 отклонено. Проверьте что хост и порт указаны правильно и что postmaster принимает TCP/IP-подсоединения.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:425)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:52)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:290)
+	at org.postgresql.Driver.makeConnection(Driver.java:448)
+	at org.postgresql.Driver.connect(Driver.java:298)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:681)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:229)
+	at server.DatabaseManager.<init>(DatabaseManager.java:73)
+	at server.DatabaseManager.<clinit>(DatabaseManager.java:32)
+	at server.WorkerManager.<init>(WorkerManager.java:49)
+	at server.ServerApp.main(ServerApp.java:32)
+Caused by: java.net.ConnectException: Connection refused: no further information
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:672)
+	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:602)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327)
+	at java.base/java.net.Socket.connect(Socket.java:633)
+	at org.postgresql.core.PGStream.createSocket(PGStream.java:271)
+	at org.postgresql.core.PGStream.<init>(PGStream.java:132)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:219)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:365)
+	... 10 common frames omitted
+2026-06-13 17:46:38.341 [main] ERROR server.DatabaseManager - Подсказка: задайте переменные среды DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+2026-06-13 17:47:30.095 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 17:47:30.102 [main] INFO  server.DatabaseManager - Подключение к БД: jdbc:postgresql://pg:5432/studs (пользователь: s505045)
+2026-06-13 17:47:32.876 [main] WARN  server.DatabaseManager - Не удалось подключиться к хосту pg (Ошибка при попытке подсоединения.). Пробуем подключиться к localhost...
+2026-06-13 17:47:33.929 [main] INFO  server.DatabaseManager - Успешное подключение к запасному хосту (localhost).
+2026-06-13 17:47:34.012 [main] INFO  server.DatabaseManager - Таблица s505045_users готова.
+2026-06-13 17:47:34.084 [main] INFO  server.DatabaseManager - Таблица s505045_organizations готова.
+2026-06-13 17:47:34.167 [main] INFO  server.DatabaseManager - Таблица s505045_workers готова.
+2026-06-13 17:47:34.275 [main] INFO  server.DatabaseManager - Загружено из БД рабочих: 1
+2026-06-13 17:47:34.276 [main] INFO  server.WorkerManager - Коллекция загружена из БД. Элементов: 1
+2026-06-13 17:47:34.280 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-06-13 17:47:34.280 [Thread-1] INFO  server.ServerApp - Консоль сервера запущена. Доступна команда: 'exit'.
+2026-06-13 17:47:34.287 [main] INFO  server.UDPServer - UDP-сервер запущен на порту: 1821 | FixedThreadPool: 20 потоков | ForkJoinPool: 19 потоков
+2026-06-13 18:28:49.147 [Thread-1] INFO  server.ServerApp - Получена команда 'exit'. Сервер завершает работу...
+2026-06-13 18:28:49.148 [Thread-1] INFO  server.UDPServer - UDP-сервер остановлен.
+2026-06-13 18:28:49.148 [main] INFO  server.UDPServer - Сокет сервера закрыт — завершение цикла.
+2026-06-13 18:28:49.149 [Thread-0] INFO  server.ServerApp - Завершение работы сервера. Закрытие соединения с БД...
+2026-06-13 18:28:49.226 [Thread-0] INFO  server.DatabaseManager - Соединение с PostgreSQL закрыто.
+2026-06-13 18:28:49.227 [Thread-0] INFO  server.ServerApp - Соединение с БД закрыто.
+2026-06-13 18:29:09.834 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 18:29:09.838 [main] INFO  server.DatabaseManager - Подключение к БД: jdbc:postgresql://pg:5432/studs (пользователь: s505045)
+2026-06-13 18:29:12.593 [main] WARN  server.DatabaseManager - Не удалось подключиться к хосту pg (Ошибка при попытке подсоединения.). Пробуем подключиться к localhost...
+2026-06-13 18:29:13.497 [main] INFO  server.DatabaseManager - Успешное подключение к запасному хосту (localhost).
+2026-06-13 18:29:13.575 [main] INFO  server.DatabaseManager - Таблица s505045_users готова.
+2026-06-13 18:29:13.649 [main] INFO  server.DatabaseManager - Таблица s505045_organizations готова.
+2026-06-13 18:29:13.735 [main] INFO  server.DatabaseManager - Таблица s505045_workers готова.
+2026-06-13 18:29:13.835 [main] INFO  server.DatabaseManager - Загружено из БД рабочих: 1
+2026-06-13 18:29:13.836 [main] INFO  server.WorkerManager - Коллекция загружена из БД. Элементов: 1
+2026-06-13 18:29:13.840 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-06-13 18:29:13.840 [Thread-1] INFO  server.ServerApp - Консоль сервера запущена. Доступна команда: 'exit'.
+2026-06-13 18:29:13.850 [main] INFO  server.UDPServer - UDP-сервер запущен на порту: 1821 | FixedThreadPool: 20 потоков | ForkJoinPool: 19 потоков
+2026-06-13 18:29:40.862 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:58521
+2026-06-13 18:29:40.871 [pool-1-thread-1] INFO  server.UDPServer - Десериализован запрос: login | login=hanna
+2026-06-13 18:29:40.951 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Успешный вход: hanna
+2026-06-13 18:29:40.968 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:58521 (298 байт)
+2026-06-13 18:29:49.952 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:58521
+2026-06-13 18:29:49.954 [pool-1-thread-2] INFO  server.UDPServer - Десериализован запрос: help | login=hanna
+2026-06-13 18:29:50.033 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:58521 (1898 байт)
+2026-06-13 19:01:51.003 [Thread-1] INFO  server.ServerApp - Получена команда 'exit'. Сервер завершает работу...
+2026-06-13 19:01:51.005 [Thread-1] INFO  server.UDPServer - UDP-сервер остановлен.
+2026-06-13 19:01:51.006 [main] INFO  server.UDPServer - Сокет сервера закрыт — завершение цикла.
+2026-06-13 19:01:51.007 [Thread-0] INFO  server.ServerApp - Завершение работы сервера. Закрытие соединения с БД...
+2026-06-13 19:01:51.090 [Thread-0] INFO  server.DatabaseManager - Соединение с PostgreSQL закрыто.
+2026-06-13 19:01:51.090 [Thread-0] INFO  server.ServerApp - Соединение с БД закрыто.

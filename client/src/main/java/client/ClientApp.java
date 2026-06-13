@@ -58,16 +58,16 @@ public class ClientApp {
         ScriptReader scriptReader = new ScriptReader();
         WorkerReader workerReader = new WorkerReader(consoleInput, scriptReader);
 
-        // --- Авторизация/регистрация при запуске ---
-        System.out.println("=========================================");
+        //  Авторизация/регистрация при запуске
+        System.out.println("◸—————————————————————————————————————◹");
         System.out.println("  Менеджер коллекции рабочих (ЛР7)");
-        System.out.println("=========================================");
+        System.out.println("◸—————————————————————————————————————◹");
         System.out.println("Вы не авторизованы. Выберите действие:");
         System.out.println("  register <логин> <пароль>  — регистрация");
         System.out.println("  login <логин> <пароль>     — вход");
-        System.out.println("=========================================");
+        System.out.println("◸—————————————————————————————————————◹");
 
-        // Попытка авторизации в начале
+        //  авторизации в начале
         while (currentLogin.isEmpty()) {
             System.out.print("> ");
             String line = scanner.hasNextLine() ? scanner.nextLine().trim() : null;
@@ -86,7 +86,7 @@ public class ClientApp {
                     System.out.println("Использование: register <логин> <пароль>");
                     continue;
                 }
-                // Отправляем регистрацию на сервер (аргумент: "login password")
+                //  отправляем регистрацию на сервер (аргумент: "login password")
                 Request req = new Request("register", tokens[1] + " " + tokens[2]);
                 Response resp = client.sendAndReceive(req);
                 System.out.println(resp.getResponseBody());

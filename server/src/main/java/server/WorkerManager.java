@@ -55,9 +55,7 @@ public class WorkerManager {
         logger.info("Коллекция загружена из БД. Элементов: " + collection.size());
     }
 
-    // -------------------------------------------------------------------------
-    // Команды чтения (используют readLock)
-    // -------------------------------------------------------------------------
+    // Команды чтения (исп. readLock)
 
     /**
      * Возвращает информацию о коллекции.
@@ -155,9 +153,7 @@ public class WorkerManager {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Команды записи (используют writeLock)
-    // -------------------------------------------------------------------------
+    // Команды записи (исп. writeLock)
 
     /**
      * Добавляет нового Worker-а в коллекцию.
@@ -172,14 +168,14 @@ public class WorkerManager {
         worker.setCreationDate(new java.util.Date());
         worker.setOwner(owner);
 
-        // Сначала пишем в БД — получаем ID от SERIAL sequence
+        //  пишем в БД —> получаем ID от SERIAL sequence
         long newId = db.insertWorker(worker, owner);
         if (newId < 0) {
             return "Ошибка: не удалось добавить рабочего в базу данных.";
         }
         worker.setId(newId);
 
-        // Только после успешной записи в БД обновляем коллекцию в памяти
+        //  после записи в БД обновляем коллекцию в памяти
         lock.writeLock().lock();
         try {
             collection.add(worker);
@@ -362,7 +358,7 @@ public class WorkerManager {
     }
 
     /**
-     * Возвращает коллекцию (для тестов и отладки).
+     * Возвращает коллекцию
      */
     public PriorityQueue<Worker> getCollection() {
         lock.readLock().lock();
