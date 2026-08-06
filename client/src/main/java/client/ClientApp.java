@@ -67,8 +67,7 @@ public class ClientApp {
         System.out.println("  login <логин> <пароль>     — вход");
         System.out.println("◸—————————————————————————————————————◹");
 
-        //  авторизации в начале
-        while (currentLogin.isEmpty()) {
+        while (currentLogin.isEmpty()) {         //  авторизации в начале
             System.out.print("> ");
             String line = scanner.hasNextLine() ? scanner.nextLine().trim() : null;
             if (line == null || line.equals("exit")) {
@@ -117,8 +116,7 @@ public class ClientApp {
         System.out.println("\nДобро пожаловать, " + currentLogin + "! Введите 'help' для списка команд.");
         System.out.println("=========================================\n");
 
-        // --- Основной цикл команд ---
-        while (true) {
+        while (true) {         //  Основной цикл команд
             String line;
             if (!scriptReader.isEmpty()) {
                 line = scriptReader.readLine();
@@ -136,7 +134,6 @@ public class ClientApp {
             String commandName = tokens[0].toLowerCase();
             String argument = tokens.length > 1 ? tokens[1].trim() : "";
 
-            // --- Локальные команды ---
             if (commandName.equals("exit")) {
                 System.out.println("Завершение работы клиента.");
                 break;
@@ -158,7 +155,7 @@ public class ClientApp {
                 continue;
             }
 
-            // Команда register/login в основном цикле — позволяем сменить пользователя
+            // Команда register/login ... позволяем сменить пользователя
             if (commandName.equals("register") || commandName.equals("login")) {
                 String[] subTokens = line.split("\\s+", 3);
                 if (subTokens.length < 3) {
@@ -183,7 +180,7 @@ public class ClientApp {
                 continue;
             }
 
-            // --- Формирование запроса к серверу ---
+            //  Формирование запроса к серверу
             Request request = null;
             try {
                 if (commandName.equals("add") || commandName.equals("add_if_max") || commandName.equals("add_if_min")) {
@@ -212,7 +209,7 @@ public class ClientApp {
                 continue;
             }
 
-            // --- Отправка на сервер и обработка ответа ---
+            //  Отправка на сервер и обработка ответа
             Response response = client.sendAndReceive(request);
             if (response.getResponseCode() == ResponseCode.OK) {
                 System.out.println(response.getResponseBody());

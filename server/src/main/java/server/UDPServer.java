@@ -45,17 +45,28 @@ public class UDPServer {
 
     /**
      * FixedThreadPool для чтения запросов.
-     * Количество потоков = количество доступных ядер процессора (или минимум 4).
      */
     private final ExecutorService readPool = Executors.newFixedThreadPool(
             Math.max(4, Runtime.getRuntime().availableProcessors())
     );
 
     /**
-     * ForkJoinPool для обработки запросов и отправки ответов.
-     * Используется общий пул (commonPool) — подходит для CPU-bound задач.
+     * ✌️Для многопотчной обработки полученного запроса использовать ForkJoinPool. <br>
+     * ✌️Для многопоточной отправки ответа использовать ForkJoinPool <br>
+     * Я не совсем в начале поняла вопрос про пулы, у меня их три, просто один из них общий для двух случаев (отправка 1 и обработка 2 -ForkJoinPool). А второй - для чтения 3, Fixed thread pool, как по заданию. <br>
+     * Их должно быть 3, даже если они одного и того же типа, все равно должно быть 3. Таким образом можно столкнуться с эффектом бутылочного горлышка и корректной передачей обработки задач по конвейеру. <br>
+     * Я поняла. Чтобы они не конкурировали, надо разделить функционал на две части, ресурс пулов не должен быть общим у них. <br>
+     * 👌Первый пул для отправки, второй для обработки. Исправила
      */
-    private final ForkJoinPool forkJoinPool = ForkJoinPool.commonPool();
+//    private final ForkJoinPool forkJoinPool_1 = ForkJoinPool.commonPool();
+
+    private final ForkJoinPool forkJoinPool_1 = new ForkJoinPool(
+            Runtime.getRuntime().availableProcessors()
+    );
+
+    private final ForkJoinPool forkJoinPool_2 = new ForkJoinPool(
+            Runtime.getRuntime().availableProcessors() * 2
+    );
 
     public UDPServer(int port, WorkerManager workerManager) {
         this.port = port;
@@ -70,30 +81,30 @@ public class UDPServer {
         try {
             socket = new DatagramSocket(port);
             running = true;
+//            logger.info("UDP-сервер запущен на порту: " + port +
+//                    " | FixedThreadPool: " + Math.max(4, Runtime.getRuntime().availableProcessors()) + " потоков" +
+//                    " | ForkJoinPool: " + forkJoinPool.getParallelism() + " потоков");
             logger.info("UDP-сервер запущен на порту: " + port +
                     " | FixedThreadPool: " + Math.max(4, Runtime.getRuntime().availableProcessors()) + " потоков" +
-                    " | ForkJoinPool: " + forkJoinPool.getParallelism() + " потоков");
+                    " | ForkJoinPool_1: " + forkJoinPool_1.getParallelism() + " потоков" +
+                    " | ForkJoinPool_2: " + forkJoinPool_2.getParallelism() + " потоков");
 
             byte[] buffer = new byte[BUFFER_SIZE];
 
             while (running) {
                 try {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                    // Главный поток ждёт пакет и сразу передаёт в ReadPool
-                    socket.receive(packet);
+                    socket.receive(packet);                     // Главный поток ждёт пакет и сразу передаёт в ReadPool
 
-                    // Копируем данные из буфера до следующей итерации
-                    byte[] data = new byte[packet.getLength()];
+                    byte[] data = new byte[packet.getLength()];                     // Копируем данные из буфера до следующей итерации
                     System.arraycopy(packet.getData(), packet.getOffset(), data, 0, packet.getLength());
 
-                    // Адрес и порт клиента для ответа
-                    final java.net.InetAddress clientAddr = packet.getAddress();
+                    final java.net.InetAddress clientAddr = packet.getAddress();                     // Адрес и порт клиента для ответа
                     final int clientPort = packet.getPort();
 
                     logger.info("Получен пакет от: " + clientAddr + ":" + clientPort);
 
-                    // Передаём обработку в FixedThreadPool (чтение / десериализация)
-                    readPool.submit(() -> processPacket(data, clientAddr, clientPort));
+                    readPool.submit(() -> processPacket(data, clientAddr, clientPort));                     // Передаём обработку в FixedThreadPool (чтение / десериализация)
 
                 } catch (SocketException e) {
                     if (!running) {
@@ -132,12 +143,10 @@ public class UDPServer {
             return;
         }
 
-        // Обработка запроса в ForkJoinPool
-        final Request finalRequest = request;
+        final Request finalRequest = request;         // Обработка запроса в ForkJoinPool
         forkJoinPool.submit(() -> {
             Response response = handleRequest(finalRequest);
-            // Отправка ответа тоже в ForkJoinPool
-            sendResponseAsync(response, clientAddr, clientPort);
+            sendResponseAsync(response, clientAddr, clientPort);             // Отправка ответа в ForkJoinPool
         });
     }
 
@@ -163,12 +172,15 @@ public class UDPServer {
             socket.close();
         }
         readPool.shutdown();
+
+
+        forkJoinPool_1.shutdown();
+        forkJoinPool_2.shutdown();
+        }
+
         logger.info("UDP-сервер остановлен.");
     }
 
-    // -------------------------------------------------------------------------
-    // Обработчик команд
-    // -------------------------------------------------------------------------
 
     /**
      * Обрабатывает запрос от клиента.
@@ -198,7 +210,6 @@ public class UDPServer {
             return handleLogin(login, password);
         }
 
-        // --- Проверка авторизации для всех остальных команд ---
         if (login.isBlank() || password.isBlank()) {
             return new Response(ResponseCode.ERROR, "Необходима авторизация. Используйте команду 'login'.");
         }
@@ -206,7 +217,6 @@ public class UDPServer {
             return new Response(ResponseCode.ERROR, "Неверный логин или пароль.");
         }
 
-        // --- Выполнение команды ---
         try {
             return switch (command) {
                 case "help" -> new Response(ResponseCode.OK, getHelpText());
@@ -330,10 +340,6 @@ public class UDPServer {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Сериализация / десериализация
-    // -------------------------------------------------------------------------
-
     private void sendResponse(Response response, java.net.InetAddress addr, int port) throws IOException {
         byte[] responseBytes = serialize(response);
         if (responseBytes.length > BUFFER_SIZE) {
@@ -360,10 +366,6 @@ public class UDPServer {
             return (Request) ois.readObject();
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Текст справки
-    // -------------------------------------------------------------------------
 
     private String getHelpText() {
         return """

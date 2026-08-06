@@ -581,3 +581,105 @@ Caused by: java.net.ConnectException: Connection refused: no further information
 2026-06-13 19:01:51.007 [Thread-0] INFO  server.ServerApp - Завершение работы сервера. Закрытие соединения с БД...
 2026-06-13 19:01:51.090 [Thread-0] INFO  server.DatabaseManager - Соединение с PostgreSQL закрыто.
 2026-06-13 19:01:51.090 [Thread-0] INFO  server.ServerApp - Соединение с БД закрыто.
+2026-06-13 19:14:39.566 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 19:14:39.569 [main] INFO  server.DatabaseManager - Подключение к БД: jdbc:postgresql://pg:5432/studs (пользователь: s505045)
+2026-06-13 19:14:42.306 [main] WARN  server.DatabaseManager - Не удалось подключиться к хосту pg (Ошибка при попытке подсоединения.). Пробуем подключиться к localhost...
+2026-06-13 19:14:43.262 [main] INFO  server.DatabaseManager - Успешное подключение к запасному хосту (localhost).
+2026-06-13 19:14:43.338 [main] INFO  server.DatabaseManager - Таблица s505045_users готова.
+2026-06-13 19:14:43.421 [main] INFO  server.DatabaseManager - Таблица s505045_organizations готова.
+2026-06-13 19:14:43.499 [main] INFO  server.DatabaseManager - Таблица s505045_workers готова.
+2026-06-13 19:14:43.600 [main] INFO  server.DatabaseManager - Загружено из БД рабочих: 1
+2026-06-13 19:14:43.601 [main] INFO  server.WorkerManager - Коллекция загружена из БД. Элементов: 1
+2026-06-13 19:14:43.604 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-06-13 19:14:43.604 [Thread-1] INFO  server.ServerApp - Консоль сервера запущена. Доступна команда: 'exit'.
+2026-06-13 19:14:43.609 [main] INFO  server.UDPServer - UDP-сервер запущен на порту: 1821 | FixedThreadPool: 20 потоков | ForkJoinPool: 19 потоков
+2026-06-13 19:15:49.068 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:63722
+2026-06-13 19:15:49.075 [pool-1-thread-1] INFO  server.UDPServer - Десериализован запрос: register | login=
+2026-06-13 19:15:49.164 [ForkJoinPool.commonPool-worker-1] INFO  server.DatabaseManager - Зарегистрирован новый пользователь: arina
+2026-06-13 19:15:49.165 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Зарегистрирован пользователь: arina
+2026-06-13 19:15:49.175 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:63722 (298 байт)
+2026-06-13 19:15:54.099 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:63722
+2026-06-13 19:15:54.101 [pool-1-thread-2] INFO  server.UDPServer - Десериализован запрос: show | login=arina
+2026-06-13 19:15:54.192 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:63722 (480 байт)
+2026-06-13 20:49:13.213 [Thread-1] INFO  server.ServerApp - Получена команда 'exit'. Сервер завершает работу...
+2026-06-13 20:49:13.216 [Thread-1] INFO  server.UDPServer - UDP-сервер остановлен.
+2026-06-13 20:49:13.217 [main] INFO  server.UDPServer - Сокет сервера закрыт — завершение цикла.
+2026-06-13 20:49:13.218 [Thread-0] INFO  server.ServerApp - Завершение работы сервера. Закрытие соединения с БД...
+2026-06-13 20:49:13.293 [Thread-0] INFO  server.DatabaseManager - Соединение с PostgreSQL закрыто.
+2026-06-13 20:49:13.293 [Thread-0] INFO  server.ServerApp - Соединение с БД закрыто.
+2026-06-13 21:10:25.566 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 21:10:25.569 [main] INFO  server.DatabaseManager - Подключение к БД: jdbc:postgresql://pg:5432/studs (пользователь: s505045)
+2026-06-13 21:10:28.318 [main] WARN  server.DatabaseManager - Не удалось подключиться к хосту pg (Ошибка при попытке подсоединения.). Пробуем подключиться к localhost...
+2026-06-13 21:10:30.876 [main] INFO  server.DatabaseManager - Успешное подключение к запасному хосту (localhost).
+2026-06-13 21:10:30.952 [main] INFO  server.DatabaseManager - Таблица s505045_users готова.
+2026-06-13 21:10:31.381 [main] INFO  server.DatabaseManager - Таблица s505045_organizations готова.
+2026-06-13 21:10:31.455 [main] INFO  server.DatabaseManager - Таблица s505045_workers готова.
+2026-06-13 21:10:31.911 [main] INFO  server.DatabaseManager - Загружено из БД рабочих: 1
+2026-06-13 21:10:31.911 [main] INFO  server.WorkerManager - Коллекция загружена из БД. Элементов: 1
+2026-06-13 21:10:31.912 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-06-13 21:10:31.914 [Thread-1] INFO  server.ServerApp - Консоль сервера запущена. Доступна команда: 'exit'.
+2026-06-13 21:10:31.917 [main] INFO  server.UDPServer - UDP-сервер запущен на порту: 1821 | FixedThreadPool: 20 потоков | ForkJoinPool: 19 потоков
+2026-06-13 21:10:58.630 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:64441
+2026-06-13 21:10:58.637 [pool-1-thread-1] INFO  server.UDPServer - Десериализован запрос: login | login=hanna
+2026-06-13 21:10:58.714 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Успешный вход: hanna
+2026-06-13 21:10:58.725 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:64441 (298 байт)
+2026-06-13 21:11:03.645 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:64441
+2026-06-13 21:11:03.647 [pool-1-thread-2] INFO  server.UDPServer - Десериализован запрос: help | login=hanna
+2026-06-13 21:11:03.723 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:64441 (1898 байт)
+2026-06-13 21:11:16.793 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:64441
+2026-06-13 21:11:16.795 [pool-1-thread-3] INFO  server.UDPServer - Десериализован запрос: info | login=hanna
+2026-06-13 21:11:16.870 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:64441 (411 байт)
+2026-06-13 21:12:48.739 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:64441
+2026-06-13 21:12:48.745 [pool-1-thread-4] INFO  server.UDPServer - Десериализован запрос: add | login=hanna
+2026-06-13 21:12:49.045 [ForkJoinPool.commonPool-worker-2] INFO  server.DatabaseManager - Worker вставлен в БД: ID=2, owner=hanna
+2026-06-13 21:12:49.046 [ForkJoinPool.commonPool-worker-2] INFO  server.WorkerManager - Добавлен новый Worker: ID=2, owner=hanna
+2026-06-13 21:12:49.049 [ForkJoinPool.commonPool-worker-2] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:64441 (273 байт)
+2026-06-13 21:12:55.783 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:64441
+2026-06-13 21:12:55.785 [pool-1-thread-5] INFO  server.UDPServer - Десериализован запрос: save | login=hanna
+2026-06-13 21:12:55.858 [ForkJoinPool.commonPool-worker-2] WARN  server.UDPServer - Неизвестная команда: save
+2026-06-13 21:12:55.859 [ForkJoinPool.commonPool-worker-2] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:64441 (291 байт)
+2026-06-13 21:13:05.862 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:64441
+2026-06-13 21:13:05.864 [pool-1-thread-6] INFO  server.UDPServer - Десериализован запрос: show | login=hanna
+2026-06-13 21:13:06.179 [ForkJoinPool.commonPool-worker-2] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:64441 (708 байт)
+2026-06-13 21:13:40.381 [Thread-1] INFO  server.ServerApp - Получена команда 'exit'. Сервер завершает работу...
+2026-06-13 21:13:40.381 [Thread-1] INFO  server.UDPServer - UDP-сервер остановлен.
+2026-06-13 21:13:40.381 [main] INFO  server.UDPServer - Сокет сервера закрыт — завершение цикла.
+2026-06-13 21:13:40.382 [Thread-0] INFO  server.ServerApp - Завершение работы сервера. Закрытие соединения с БД...
+2026-06-13 21:13:40.454 [Thread-0] INFO  server.DatabaseManager - Соединение с PostgreSQL закрыто.
+2026-06-13 21:13:40.454 [Thread-0] INFO  server.ServerApp - Соединение с БД закрыто.
+2026-06-13 21:23:51.892 [main] INFO  server.ServerApp - Инициализация сервера ЛР7...
+2026-06-13 21:23:51.895 [main] INFO  server.DatabaseManager - Подключение к БД: jdbc:postgresql://pg:5432/studs (пользователь: s505045)
+2026-06-13 21:23:54.639 [main] WARN  server.DatabaseManager - Не удалось подключиться к хосту pg (Ошибка при попытке подсоединения.). Пробуем подключиться к localhost...
+2026-06-13 21:23:55.417 [main] INFO  server.DatabaseManager - Успешное подключение к запасному хосту (localhost).
+2026-06-13 21:23:55.496 [main] INFO  server.DatabaseManager - Таблица s505045_users готова.
+2026-06-13 21:23:55.569 [main] INFO  server.DatabaseManager - Таблица s505045_organizations готова.
+2026-06-13 21:23:55.642 [main] INFO  server.DatabaseManager - Таблица s505045_workers готова.
+2026-06-13 21:23:55.738 [main] INFO  server.DatabaseManager - Загружено из БД рабочих: 2
+2026-06-13 21:23:55.739 [main] INFO  server.WorkerManager - Коллекция загружена из БД. Элементов: 2
+2026-06-13 21:23:55.741 [main] INFO  server.ServerApp - Запуск UDP-сервера на порту 1821
+2026-06-13 21:23:55.741 [Thread-1] INFO  server.ServerApp - Консоль сервера запущена. Доступна команда: 'exit'.
+2026-06-13 21:23:55.746 [main] INFO  server.UDPServer - UDP-сервер запущен на порту: 1821 | FixedThreadPool: 20 потоков | ForkJoinPool: 19 потоков
+2026-06-13 21:24:17.254 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:51985
+2026-06-13 21:24:17.263 [pool-1-thread-1] INFO  server.UDPServer - Десериализован запрос: login | login=hanna
+2026-06-13 21:24:17.338 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Успешный вход: hanna
+2026-06-13 21:24:17.344 [ForkJoinPool.commonPool-worker-1] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:51985 (298 байт)
+2026-06-13 21:25:19.846 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:51985
+2026-06-13 21:25:19.853 [pool-1-thread-2] INFO  server.UDPServer - Десериализован запрос: add | login=hanna
+2026-06-13 21:25:21.875 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:51985
+2026-06-13 21:25:21.987 [pool-1-thread-3] INFO  server.UDPServer - Десериализован запрос: add | login=hanna
+2026-06-13 21:25:22.853 [ForkJoinPool.commonPool-worker-2] INFO  server.DatabaseManager - Worker вставлен в БД: ID=3, owner=hanna
+2026-06-13 21:25:22.854 [ForkJoinPool.commonPool-worker-2] INFO  server.WorkerManager - Добавлен новый Worker: ID=3, owner=hanna
+2026-06-13 21:25:22.857 [ForkJoinPool.commonPool-worker-2] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:51985 (273 байт)
+2026-06-13 21:25:23.206 [ForkJoinPool.commonPool-worker-3] INFO  server.DatabaseManager - Worker вставлен в БД: ID=4, owner=hanna
+2026-06-13 21:25:23.207 [ForkJoinPool.commonPool-worker-3] INFO  server.WorkerManager - Добавлен новый Worker: ID=4, owner=hanna
+2026-06-13 21:25:23.207 [ForkJoinPool.commonPool-worker-3] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:51985 (273 байт)
+2026-06-13 21:25:24.905 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:51985
+2026-06-13 21:25:24.906 [pool-1-thread-4] INFO  server.UDPServer - Десериализован запрос: showshow | login=hanna
+2026-06-13 21:25:24.991 [ForkJoinPool.commonPool-worker-3] WARN  server.UDPServer - Неизвестная команда: showshow
+2026-06-13 21:25:24.992 [ForkJoinPool.commonPool-worker-3] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:51985 (295 байт)
+2026-06-13 21:25:37.002 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:51985
+2026-06-13 21:25:37.005 [pool-1-thread-5] INFO  server.UDPServer - Десериализован запрос: show | login=hanna
+2026-06-13 21:25:37.098 [ForkJoinPool.commonPool-worker-3] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:51985 (1151 байт)
+2026-06-13 21:25:45.083 [main] INFO  server.UDPServer - Получен пакет от: /127.0.0.1:51985
+2026-06-13 21:25:45.085 [pool-1-thread-6] INFO  server.UDPServer - Десериализован запрос: show | login=hanna
+2026-06-13 21:25:45.162 [ForkJoinPool.commonPool-worker-3] INFO  server.UDPServer - Отправлен ответ: /127.0.0.1:51985 (1151 байт)
