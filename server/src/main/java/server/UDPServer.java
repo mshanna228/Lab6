@@ -31,6 +31,22 @@ import java.util.concurrent.ForkJoinPool;
  * <p>Авторизация: каждый запрос содержит login/password.
  * Перед обработкой любой команды (кроме register/login) сервер проверяет
  * подлинность пользователя через DatabaseManager.</p>
+ *
+ * _________________________________<br>
+ *      ️Для многопотчной обработки полученного запроса использовать ForkJoinPool. <br>
+ *      ️Для многопоточной отправки ответа использовать ForkJoinPool <br>
+ *      Я не совсем в начале поняла вопрос про пулы, у меня их три, просто один из них общий для двух случаев (отправка 1 и обработка 2 -ForkJoinPool). А второй - для чтения 3, Fixed thread pool, как по заданию. <br>
+ *      Их должно быть 3, даже если они одного и того же типа, все равно должно быть 3. Таким образом можно столкнуться с эффектом бутылочного горлышка и корректной передачей обработки задач по конвейеру. <br>
+ *      Я поняла. Чтобы они не конкурировали, надо разделить функционал на две части, ресурс пулов не должен быть общим у них. <br>
+ *      👌Первый пул для отправки, второй для обработки. Исправила
+ *      <br>
+ *      _____________________________________ <br>
+ *      Конвейер многопоточности (UDPServer.java) <br>
+ *      По ТЗ 3 отдельных пула: <br>
+ *      1. readPool (FixedThreadPool) — поток из этого пула вычитывает байты из UDP-сокета и десериализует Request.  <br>
+ *      2. forkJoinPool_1 (ForkJoinPool) — в этот пул передаётся задача обработки запроса (проверка авторизации, вызовы методов коллекции / БД).  <br>
+ *      3. forkJoinPool_2 (ForkJoinPool) — в этот пул передаётся задача сериализации и отправки ответа клиенту.
+ *
  */
 public class UDPServer {
     private static final Logger logger = LoggerFactory.getLogger(UDPServer.class);
@@ -44,23 +60,19 @@ public class UDPServer {
     private static final int BUFFER_SIZE = 65535;
 
     /**
-     * FixedThreadPool для чтения запросов.
+     * 1. FixedThreadPool для чтения запросов.
      */
     private final ExecutorService readPool = Executors.newFixedThreadPool(
             Math.max(4, Runtime.getRuntime().availableProcessors())
     );
 
-    /**
-     * ✌️Для многопотчной обработки полученного запроса использовать ForkJoinPool. <br>
-     * ✌️Для многопоточной отправки ответа использовать ForkJoinPool <br>
-     * Я не совсем в начале поняла вопрос про пулы, у меня их три, просто один из них общий для двух случаев (отправка 1 и обработка 2 -ForkJoinPool). А второй - для чтения 3, Fixed thread pool, как по заданию. <br>
-     * Их должно быть 3, даже если они одного и того же типа, все равно должно быть 3. Таким образом можно столкнуться с эффектом бутылочного горлышка и корректной передачей обработки задач по конвейеру. <br>
-     * Я поняла. Чтобы они не конкурировали, надо разделить функционал на две части, ресурс пулов не должен быть общим у них. <br>
-     * 👌Первый пул для отправки, второй для обработки. Исправила
-     */
+
 //    private final ForkJoinPool forkJoinPool_1 = ForkJoinPool.commonPool();
 
-    private final ForkJoinPool forkJoinPool_1 = new ForkJoinPool(
+    /**
+     * ForkJoinPool (1) для ОБРАБОТКИ запросов
+     */
+    private final ForkJoinPool processingPool = new ForkJoinPool(
             Runtime.getRuntime().availableProcessors()
     );
 
