@@ -56,7 +56,9 @@ public class UDPServer {
     private DatagramSocket socket;
     private volatile boolean running = false;
 
-    /** Размер буфера UDP-пакета (максимальный размер датаграммы). */
+    /** Размер буфера UDP-пакета (максимальный размер датаграммы). В спецификации протокола UDP максимальный теоретический размер одной датаграммы составляет 65535 байт.
+     * Если размер сериализованного объекта Response превысит этот размер, датаграмма не поместится и выбросит ошибку (это обрабатывается в методе sendResponse)
+     * */
     private static final int BUFFER_SIZE = 65535;
 
     /**
@@ -156,7 +158,7 @@ public class UDPServer {
         }
 
         final Request finalRequest = request;         // Обработка запроса в ForkJoinPool
-        forkJoinPool.submit(() -> {
+        responsePool.submit(() -> {
             Response response = handleRequest(finalRequest);
             sendResponseAsync(response, clientAddr, clientPort);             // Отправка ответа в ForkJoinPool
         });
