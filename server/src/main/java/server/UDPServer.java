@@ -3,8 +3,8 @@ package server;
 import common.interaction.Request;
 import common.interaction.Response;
 import common.interaction.ResponseCode;
-import common.model.Worker;
 import common.model.Status;
+import common.model.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,32 +21,10 @@ import java.util.concurrent.ForkJoinPool;
  *
  * <p>Архитектура многопоточности:</p>
  * <ul>
- *   <li><b>FixedThreadPool</b> — для чтения входящих UDP-датаграмм.
- *       Каждый поток из пула читает один пакет и делегирует его обработку.</li>
- *   <li><b>ForkJoinPool</b> — для обработки десериализованного запроса
- *       (выполнение команды через WorkerManager).</li>
- *   <li><b>ForkJoinPool</b> — для сериализации и отправки ответа клиенту.</li>
+ *   <li><b>FixedThreadPool (readPool)</b> — чтение байтов из сокета и десериализация Request.</li>
+ *   <li><b>ForkJoinPool (forkJoinPool_1)</b> — проверка авторизации и выполнение команд.</li>
+ *   <li><b>ForkJoinPool (forkJoinPool_2)</b> — сериализация Response и отправка клиенту.</li>
  * </ul>
- *
- * <p>Авторизация: каждый запрос содержит login/password.
- * Перед обработкой любой команды (кроме register/login) сервер проверяет
- * подлинность пользователя через DatabaseManager.</p>
- *
- * _________________________________<br>
- *      ️Для многопотчной обработки полученного запроса использовать ForkJoinPool. <br>
- *      ️Для многопоточной отправки ответа использовать ForkJoinPool <br>
- *      Я не совсем в начале поняла вопрос про пулы, у меня их три, просто один из них общий для двух случаев (отправка 1 и обработка 2 -ForkJoinPool). А второй - для чтения 3, Fixed thread pool, как по заданию. <br>
- *      Их должно быть 3, даже если они одного и того же типа, все равно должно быть 3. Таким образом можно столкнуться с эффектом бутылочного горлышка и корректной передачей обработки задач по конвейеру. <br>
- *      Я поняла. Чтобы они не конкурировали, надо разделить функционал на две части, ресурс пулов не должен быть общим у них. <br>
- *      👌Первый пул для отправки, второй для обработки. Исправила
- *      <br>
- *      _____________________________________ <br>
- *      Конвейер многопоточности (UDPServer.java) <br>
- *      По ТЗ 3 отдельных пула: <br>
- *      1. readPool (FixedThreadPool) — поток из этого пула вычитывает байты из UDP-сокета и десериализует Request.  <br>
- *      2. forkJoinPool_1 (ForkJoinPool) — в этот пул передаётся задача обработки запроса (проверка авторизации, вызовы методов коллекции / БД).  <br>
- *      3. forkJoinPool_2 (ForkJoinPool) — в этот пул передаётся задача сериализации и отправки ответа клиенту.
- *
  */
 public class UDPServer {
     private static final Logger logger = LoggerFactory.getLogger(UDPServer.class);
@@ -56,28 +34,19 @@ public class UDPServer {
     private DatagramSocket socket;
     private volatile boolean running = false;
 
-    /** Размер буфера UDP-пакета (максимальный размер датаграммы). В спецификации протокола UDP максимальный теоретический размер одной датаграммы составляет 65535 байт.
-     * Если размер сериализованного объекта Response превысит этот размер, датаграмма не поместится и выбросит ошибку (это обрабатывается в методе sendResponse)
-     * */
     private static final int BUFFER_SIZE = 65535;
 
-    /**
-     * 1. FixedThreadPool для чтения запросов.
-     */
+    // 1. FixedThreadPool для чтения запросов (ТЗ)
     private final ExecutorService readPool = Executors.newFixedThreadPool(
             Math.max(4, Runtime.getRuntime().availableProcessors())
     );
 
-
-//    private final ForkJoinPool forkJoinPool_1 = ForkJoinPool.commonPool();
-
-    /**
-     * ForkJoinPool (1) для ОБРАБОТКИ запросов
-     */
-    private final ForkJoinPool processingPool = new ForkJoinPool(
+    // 2. ForkJoinPool для обработки полученного запроса (ТЗ)
+    private final ForkJoinPool forkJoinPool_1 = new ForkJoinPool(
             Runtime.getRuntime().availableProcessors()
     );
 
+    // 3. ForkJoinPool для отправки ответа (ТЗ)
     private final ForkJoinPool forkJoinPool_2 = new ForkJoinPool(
             Runtime.getRuntime().availableProcessors() * 2
     );
@@ -87,128 +56,92 @@ public class UDPServer {
         this.workerManager = workerManager;
     }
 
-    /**
-     * Запускает серверный цикл прослушивания UDP-порта.
-     * Для каждого входящего пакета запускает задачу в FixedThreadPool.
-     */
     public void start() {
         try {
             socket = new DatagramSocket(port);
             running = true;
-//            logger.info("UDP-сервер запущен на порту: " + port +
-//                    " | FixedThreadPool: " + Math.max(4, Runtime.getRuntime().availableProcessors()) + " потоков" +
-//                    " | ForkJoinPool: " + forkJoinPool.getParallelism() + " потоков");
-            logger.info("UDP-сервер запущен на порту: " + port +
-                    " | FixedThreadPool: " + Math.max(4, Runtime.getRuntime().availableProcessors()) + " потоков" +
-                    " | ForkJoinPool_1: " + forkJoinPool_1.getParallelism() + " потоков" +
-                    " | ForkJoinPool_2: " + forkJoinPool_2.getParallelism() + " потоков");
+            logger.info("UDP-сервер запущен на порту: {} | FixedThreadPool: {} потоков | ForkJoinPool_1: {} потоков | ForkJoinPool_2: {} потоков",
+                    port,
+                    Math.max(4, Runtime.getRuntime().availableProcessors()),
+                    forkJoinPool_1.getParallelism(),
+                    forkJoinPool_2.getParallelism());
 
             byte[] buffer = new byte[BUFFER_SIZE];
 
             while (running) {
                 try {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                    socket.receive(packet);                     // Главный поток ждёт пакет и сразу передаёт в ReadPool
+                    socket.receive(packet);
 
-                    byte[] data = new byte[packet.getLength()];                     // Копируем данные из буфера до следующей итерации
+                    byte[] data = new byte[packet.getLength()];
                     System.arraycopy(packet.getData(), packet.getOffset(), data, 0, packet.getLength());
 
-                    final java.net.InetAddress clientAddr = packet.getAddress();                     // Адрес и порт клиента для ответа
+                    final java.net.InetAddress clientAddr = packet.getAddress();
                     final int clientPort = packet.getPort();
 
-                    logger.info("Получен пакет от: " + clientAddr + ":" + clientPort);
+                    logger.info("Получен пакет от: {}:{}", clientAddr, clientPort);
 
-                    readPool.submit(() -> processPacket(data, clientAddr, clientPort));                     // Передаём обработку в FixedThreadPool (чтение / десериализация)
+                    // Передача в readPool (FixedThreadPool) для чтения и десериализации
+                    readPool.submit(() -> processPacket(data, clientAddr, clientPort));
 
                 } catch (SocketException e) {
                     if (!running) {
                         logger.info("Сокет сервера закрыт — завершение цикла.");
                     } else {
-                        logger.error("Ошибка сокета: " + e.getMessage(), e);
+                        logger.error("Ошибка сокета: {}", e.getMessage(), e);
                     }
                 } catch (IOException e) {
-                    logger.error("Ошибка приёма пакета: " + e.getMessage(), e);
+                    logger.error("Ошибка приёма пакета: {}", e.getMessage(), e);
                 }
             }
         } catch (SocketException e) {
-            logger.error("Не удалось запустить сервер на порту " + port + ": " + e.getMessage(), e);
+            logger.error("Не удалось запустить сервер на порту {}: {}", port, e.getMessage(), e);
         }
     }
 
-    /**
-     * Обрабатывает один UDP-пакет: десериализует запрос, обрабатывает через ForkJoinPool,
-     * отправляет ответ через ForkJoinPool.
-     * Вызывается из потока FixedThreadPool.
-     *
-     * @param data       байты пакета
-     * @param clientAddr адрес клиента
-     * @param clientPort порт клиента
-     */
     private void processPacket(byte[] data, java.net.InetAddress clientAddr, int clientPort) {
-        // Десериализация запроса (в потоке ReadPool)
         Request request;
         try {
             request = deserialize(data);
-            logger.info("Десериализован запрос: " + request.getCommandName() +
-                    " | login=" + request.getLogin());
+            logger.info("Десериализован запрос: {} | login={}", request.getCommandName(), request.getLogin());
         } catch (Exception e) {
-            logger.error("Ошибка десериализации: " + e.getMessage(), e);
+            logger.error("Ошибка десериализации: {}", e.getMessage(), e);
             sendResponseAsync(new Response(ResponseCode.ERROR, "Ошибка десериализации запроса."), clientAddr, clientPort);
             return;
         }
 
-        final Request finalRequest = request;         // Обработка запроса в ForkJoinPool
-        responsePool.submit(() -> {
+        final Request finalRequest = request;
+
+        // Передача задачи обработки в forkJoinPool_1
+        forkJoinPool_1.submit(() -> {
             Response response = handleRequest(finalRequest);
-            sendResponseAsync(response, clientAddr, clientPort);             // Отправка ответа в ForkJoinPool
+            // Передача сформированного ответа на отправку в forkJoinPool_2
+            sendResponseAsync(response, clientAddr, clientPort);
         });
     }
 
-    /**
-     * Отправляет ответ клиенту асинхронно через ForkJoinPool.
-     */
     private void sendResponseAsync(Response response, java.net.InetAddress addr, int port) {
-        forkJoinPool.submit(() -> {
+        // Передача задачи отправки в forkJoinPool_2
+        forkJoinPool_2.submit(() -> {
             try {
                 sendResponse(response, addr, port);
             } catch (IOException e) {
-                logger.error("Ошибка отправки ответа: " + e.getMessage(), e);
+                logger.error("Ошибка отправки ответа: {}", e.getMessage(), e);
             }
         });
     }
 
-    /**
-     * Остановка сервера: закрывает сокет и завершает пулы потоков.
-     */
     public void stop() {
         running = false;
         if (socket != null && !socket.isClosed()) {
             socket.close();
         }
         readPool.shutdown();
-
-
         forkJoinPool_1.shutdown();
         forkJoinPool_2.shutdown();
-        }
-
         logger.info("UDP-сервер остановлен.");
     }
 
-
-    /**
-     * Обрабатывает запрос от клиента.
-     *
-     * <p>Алгоритм:</p>
-     * <ol>
-     *   <li>Если команда register или login — обрабатывает без авторизации.</li>
-     *   <li>Для всех остальных команд — проверяет login/password через DatabaseManager.</li>
-     *   <li>При успешной авторизации выполняет команду через WorkerManager.</li>
-     * </ol>
-     *
-     * @param request десериализованный запрос от клиента
-     * @return ответ сервера
-     */
     private Response handleRequest(Request request) {
         String command = request.getCommandName().toLowerCase();
         String arg = request.getCommandStringArgument();
@@ -216,7 +149,7 @@ public class UDPServer {
         String login = request.getLogin();
         String password = request.getPassword();
 
-        // --- Команды без авторизации ---
+        // Команды без авторизации
         if (command.equals("register")) {
             return handleRegister(arg);
         }
@@ -298,56 +231,47 @@ public class UDPServer {
                 }
 
                 default -> {
-                    logger.warn("Неизвестная команда: " + command);
+                    logger.warn("Неизвестная команда: {}", command);
                     yield new Response(ResponseCode.ERROR, "Неизвестная команда '" + command + "'. Введите 'help'.");
                 }
             };
         } catch (NumberFormatException e) {
-            logger.warn("Неверный формат числового аргумента: " + arg);
+            logger.warn("Неверный формат числового аргумента: {}", arg);
             return new Response(ResponseCode.ERROR, "Ошибка: неверный формат числового аргумента.");
         } catch (IllegalArgumentException e) {
-            logger.warn("Неверное значение аргумента: " + arg);
+            logger.warn("Неверное значение аргумента: {}", arg);
             return new Response(ResponseCode.ERROR, "Ошибка: неверное значение аргумента.");
         } catch (Exception e) {
-            logger.error("Ошибка обработки запроса: " + e.getMessage(), e);
+            logger.error("Ошибка обработки запроса: {}", e.getMessage(), e);
             return new Response(ResponseCode.ERROR, "Внутренняя ошибка сервера: " + e.getMessage());
         }
     }
 
-    /**
-     * Обрабатывает команду регистрации.
-     * Аргумент: "username password" через пробел.
-     */
     private Response handleRegister(String arg) {
         if (arg == null || !arg.contains(" ")) {
-            return new Response(ResponseCode.ERROR,
-                    "Использование: register <логин> <пароль>");
+            return new Response(ResponseCode.ERROR, "Использование: register <логин> <пароль>");
         }
         String[] parts = arg.split("\\s+", 2);
         if (parts.length < 2) {
-            return new Response(ResponseCode.ERROR,
-                    "Использование: register <логин> <пароль>");
+            return new Response(ResponseCode.ERROR, "Использование: register <логин> <пароль>");
         }
         String username = parts[0].trim();
         String password = parts[1].trim();
 
         if (DatabaseManager.INSTANCE.registerUser(username, password)) {
-            logger.info("Зарегистрирован пользователь: " + username);
+            logger.info("Зарегистрирован пользователь: {}", username);
             return new Response(ResponseCode.OK, "Регистрация успешна. Добро пожаловать, " + username + "!");
         } else {
             return new Response(ResponseCode.ERROR, "Логин '" + username + "' уже занят. Выберите другой.");
         }
     }
 
-    /**
-     * Обрабатывает команду авторизации (проверяет логин/пароль).
-     */
     private Response handleLogin(String login, String password) {
         if (login.isBlank() || password.isBlank()) {
             return new Response(ResponseCode.ERROR, "Использование: login <логин> <пароль>");
         }
         if (DatabaseManager.INSTANCE.authenticateUser(login, password)) {
-            logger.info("Успешный вход: " + login);
+            logger.info("Успешный вход: {}", login);
             return new Response(ResponseCode.OK, "Авторизация успешна. Добро пожаловать, " + login + "!");
         } else {
             return new Response(ResponseCode.ERROR, "Неверный логин или пароль.");
@@ -357,12 +281,12 @@ public class UDPServer {
     private void sendResponse(Response response, java.net.InetAddress addr, int port) throws IOException {
         byte[] responseBytes = serialize(response);
         if (responseBytes.length > BUFFER_SIZE) {
-            logger.error("Ответ превышает лимит UDP: " + responseBytes.length + " байт");
+            logger.error("Ответ превышает лимит UDP: {} байт", responseBytes.length);
             responseBytes = serialize(new Response(ResponseCode.ERROR, "Ошибка: ответ превысил лимит UDP."));
         }
         DatagramPacket responsePacket = new DatagramPacket(responseBytes, responseBytes.length, addr, port);
         socket.send(responsePacket);
-        logger.info("Отправлен ответ: " + addr + ":" + port + " (" + responseBytes.length + " байт)");
+        logger.info("Отправлен ответ: {}:{} ({} байт)", addr, port, responseBytes.length);
     }
 
     private byte[] serialize(Object obj) throws IOException {
